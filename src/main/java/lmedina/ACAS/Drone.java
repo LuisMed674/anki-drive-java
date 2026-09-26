@@ -7,6 +7,8 @@ import de.adesso.anki.Vehicle;
 import de.adesso.anki.messages.*;
 import de.adesso.anki.messages.LightsPatternMessage.LightConfig;
 import de.adesso.anki.roadmap.roadpieces.FinishRoadpiece;
+import de.adesso.anki.RoadmapScanner;
+import de.adesso.anki.messages.TurnMessage;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -15,6 +17,7 @@ import java.util.List;
 /** 
 * Simple Program to make the cars move around the track indefinently
 * @author Luis Medina (lmedina@oswego.edu)
+* @since  09-26-2026
 */
 
 public class Drone{
@@ -58,9 +61,7 @@ public class Drone{
         this.v = v;
     }
 
-    public void run() throws InterruptedException {
-        System.out.println("\nConnecting to " + v + " @ " + v.getAddress());
-        v.connect();
+    public static void droneUpdate(Vehicle v){
         System.out.println("Vehicle Advertisement Data:");
         System.out.println("Hi it's Luis!");
         System.out.println("   " + v);
@@ -71,6 +72,15 @@ public class Drone{
         System.out.println("      Address: " + v.getAddress());
         System.out.println("      Color: " + v.getColor());
         System.out.println("      charging? " + v.getAdvertisement().isCharging());
+
+    }
+
+    public void run() throws InterruptedException {
+        System.out.println("\nConnecting to " + v + " @ " + v.getAddress());
+        v.connect();
+        droneUpdate(v);
+
+        // int finishLineId = FinishRoadpiece.ROADPIECE_IDS[0];
 
 
         System.out.print("   Connected. Setting SDK mode...");   //always set the SDK mode FIRST!
@@ -118,17 +128,33 @@ public class Drone{
         //Speed is easy. Just tell the car how fast to go and how quickly to accelerate.
         v.sendMessage(new SetSpeedMessage(500, 100));
 
-        System.out.println("   Driving to finish line...");
+        System.out.println("   Driving to Around the track...");
         //Use the sensor on the bottom to check the road pieces. This is like a response/request, but will
         //update whenever there's a new value.
-      
+    
+        //Message Handlers
+        TurnMessage uturn = new TurnMessage(3,0);
+        ChangeLaneMessage clm = new ChangeLaneMessage((float)-50, 50, 5);
+
         FinishLineDetector fld = new FinishLineDetector();
+        
+        //rms.startScanning();
+        // RoadmapScanner rms = new RoadmapScanner(this.v);
+        // System.out.println(rms.getPieceIDs());
         v.addMessageListener(LocalizationPositionUpdateMessage.class, fld);
         v.sendMessage(new LocalizationPositionUpdateMessage());
+        
+        //Tryint to get the car to change lanes
+        //v.sendMessage(uturn);
+        //v.sendMessage(uturn);
+        
+        
          while (!fld.stop ) {
              Thread.sleep(interval);
          }
     
+       // v.sendMessage(TurnMessage(3, 0))
+
         v.sendMessage(new SetSpeedMessage(0, 12500));
         v.disconnect();
         System.out.println("Disconnected from " + v);
