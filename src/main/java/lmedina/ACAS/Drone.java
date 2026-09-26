@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+/** 
+* Simple Program to make the cars move around the track indefinently
+* @author Luis Medina (lmedina@oswego.edu)
+*/
+
 public class Drone{
 
         public static void main(String[] args) throws InterruptedException {

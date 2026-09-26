@@ -24,7 +24,7 @@ public class AnkiConnectionTest {
         System.out.println("Launching connector...");
         AnkiConnector anki = null;
         try {
-            anki = new AnkiConnector("192.168.235.22", 5000);
+            anki = new AnkiConnector("localhost", 5000);
         } catch (IOException ioe) {
             System.out.println("Error connecting to server. Is it running?");
             System.out.println("Exiting.");
