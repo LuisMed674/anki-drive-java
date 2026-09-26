@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'java-library'
 apply plugin: 'maven'
 apply plugin: 'com.moowork.node'
-group = 'com.github.tenbergen'
+group = 'com.github.lmedina'
 
 compileJava.options.fork = true
 
@@ -84,6 +84,12 @@ task ankiConnectionTest(type: JavaExec) {
 task scanTrack(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'edu.oswego.cs.CPSLab.RoadmapScannerTest'
+}
+
+//added exec task for Drone test program
+task drone(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'lmedina.ACAS.Drone'
 }
 
 //processResources.dependsOn(['npmInstall']) // moved to server task because only that needs node. Fixed Jitpack issues.
