@@ -8,6 +8,7 @@ import de.adesso.anki.messages.*;
 import de.adesso.anki.messages.LightsPatternMessage.LightConfig;
 import de.adesso.anki.roadmap.roadpieces.FinishRoadpiece;
 import de.adesso.anki.RoadmapScanner;
+import de.adesso.anki.messages.SetOffsetFromRoadCenterMessage;
 import de.adesso.anki.messages.TurnMessage;
 
 import java.io.IOException;
@@ -56,6 +57,9 @@ public class Drone{
 
     private Vehicle v;
     private long interval = 10;
+
+    //public TurnMessage uturn = new TurnMessage(3,1);
+
 
     public Drone(Vehicle v) {
         this.v = v;
@@ -133,10 +137,13 @@ public class Drone{
         //update whenever there's a new value.
     
         //Message Handlers
-        TurnMessage uturn = new TurnMessage(3,0);
-        ChangeLaneMessage clm = new ChangeLaneMessage((float)-50, 50, 5);
+        // TurnMessage uturn = new TurnMessage(3,1);
 
-        FinishLineDetector fld = new FinishLineDetector();
+        SetOffsetFromRoadCenterMessage offset = new SetOffsetFromRoadCenterMessage();
+        v.sendMessage(offset);
+        ChangeLaneMessage clm = new ChangeLaneMessage(90, 100, 100);
+
+        FinishLineDetector fld = new FinishLineDetector(v);
         
         //rms.startScanning();
         // RoadmapScanner rms = new RoadmapScanner(this.v);
@@ -144,20 +151,33 @@ public class Drone{
         v.addMessageListener(LocalizationPositionUpdateMessage.class, fld);
         v.sendMessage(new LocalizationPositionUpdateMessage());
         
+
+
         //Tryint to get the car to change lanes
-        //v.sendMessage(uturn);
+        //v.sendMessage(clm);
         //v.sendMessage(uturn);
         
+        int i = 0;
         
          while (!fld.stop ) {
-             Thread.sleep(interval);
+            
+            // if(fld.onFinishLine == true){
+            //     v.sendMessage(uturn);
+            // }
+            System.out.println(i);
+            //if(fld.onFinishLine == true){
+            //}
+            Thread.sleep(interval);
+            i++;
+
+             
          }
     
        // v.sendMessage(TurnMessage(3, 0))
 
-        v.sendMessage(new SetSpeedMessage(0, 12500));
-        v.disconnect();
-        System.out.println("Disconnected from " + v);
+        // v.sendMessage(new SetSpeedMessage(0, 12500));
+        // v.disconnect();
+        // System.out.println("Disconnected from " + v);
     }
 
     /**
@@ -198,11 +218,34 @@ public class Drone{
     private class FinishLineDetector implements MessageListener<LocalizationPositionUpdateMessage> {
         private int finishLineId = FinishRoadpiece.ROADPIECE_IDS[0];
         private boolean stop = false;
+        public boolean onFinishLine = false;
+        private Vehicle v;
+        private TurnMessage uturn = new TurnMessage(3,1);
+
+        public FinishLineDetector(Vehicle v){
+             this.v = v;
+        }
 
         @Override
         public void messageReceived(LocalizationPositionUpdateMessage m) {
-            if (m.getRoadPieceId() == finishLineId) System.out.println("Finish Line btw");
+            //System.out.println("Message Here");
+            if (m.getRoadPieceId() == finishLineId){
+                if(this.onFinishLine == false){
+                System.out.println("Finish Line btw"); this.onFinishLine = true; 
+                v.sendMessage(uturn);
+                }
+            }else{ 
+                if(this.onFinishLine == true){
+                this.onFinishLine = false; System.out.println("Off the line btw"); 
+                //v.sendMessage(uturn);}
+            }
+            }
         }
+
+        // public void turnOnFinishLine(Vehicle v){
+        //     if(this.onFinishLine == true) v.sendMessage(new TurnMessage(3, 1));
+
+        // }
     }
 
 }
