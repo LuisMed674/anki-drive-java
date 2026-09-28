@@ -23,17 +23,27 @@ import java.util.List;
 
 public class Drone{
 
+    public static final String RESET = "\u001B[0m";
+    public static final String BLACK = "\u001B[30m";
+    public static final String RED = "\u001B[31m";
+    public static final String GREEN = "\u001B[32m";
+    public static final String YELLOW = "\u001B[33m";
+    public static final String PURPLE = "\u001B[35m";
+    public static final String CYAN = "\u001B[36m";
+    public static final String WHITE = "\u001B[37m";
+
+
         public static void main(String[] args) throws InterruptedException {
         System.out.println("Launching connector...");
         AnkiConnector anki = null;
         try {
             anki = new AnkiConnector("192.168.235.22", 5000);
         } catch (IOException ioe) {
-            System.out.println("Error connecting to server. Is it running?");
+            System.out.println(RED + "Error connecting to server. Is it running?" + RESET);
             System.out.println("Exiting.");
             System.exit(0);
         }
-        System.out.print(" looking for cars...");
+        System.out.print(GREEN + "looking for cars..." + RESET);
         List<Vehicle> vehicles = anki.findVehicles();
 
         if (vehicles.isEmpty()) {
@@ -231,12 +241,12 @@ public class Drone{
             //System.out.println("Message Here");
             if (m.getRoadPieceId() == finishLineId){
                 if(this.onFinishLine == false){
-                System.out.println("Finish Line btw"); this.onFinishLine = true; 
+                System.out.println(PURPLE + "Finish Line btw"); this.onFinishLine = true; 
                 v.sendMessage(uturn);
                 }
             }else{ 
                 if(this.onFinishLine == true){
-                this.onFinishLine = false; System.out.println("Off the line btw"); 
+                this.onFinishLine = false; System.out.println(CYAN + "Off the line btw"); 
                 //v.sendMessage(uturn);}
             }
             }
