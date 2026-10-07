@@ -78,7 +78,9 @@ public class RoadmapScannerTest {
 
             System.out.println("Scanned track is:");
             System.out.println(rm2.toString());
-            System.out.println("Trying to save Roadmap..." + Roadmap.saveRoadmap(rm2, "C:/Users/luism/Anki Roadmaps" + "/" + "Roadmap.ovrdrv"));
+            System.out.println("Trying to save Roadmap..." + Roadmap.saveRoadmap(rm2, 
+            //"C:/Users/luism/Anki Roadmaps" 
+            "user.home"+ "/" + "Roadmap.ovrdrv"));
 
       //      System.out.println("Are the loaded and the scanned Roadmap equal?");
       //      System.out.println(rm0.equals(rm2));
